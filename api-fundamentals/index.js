@@ -1,6 +1,6 @@
 const http = require('http');
-
-
+const fs = require('fs');
+const url = require('url');
 
 
 // create a server 
@@ -11,22 +11,72 @@ const http = require('http');
 http
 .createServer((req,res)=>{
 
-    console.log(req.url);
-    console.log(req.method);
+    let parsedUrl = url.parse(req.url,true);
+    console.log(parsedUrl);
 
-    if(req.url==="/products" && req.method=="GET")
+    // reading the file as string 
+    let products=fs.readFileSync("./products.json","utf-8");
+
+    // fetch all the products 
+    if(parsedUrl.pathname=="/products" && req.method=="GET" && parsedUrl.query.id==undefined)
     {
-       
-        res.end("Get Products Data");
+       res.end(products);
     }
-    else if (req.url=="/products" && req.method=="POST")
+    // fetch product based on id 
+    else if(parsedUrl.pathname=="/products" && req.method=="GET" && parsedUrl.query.id!=undefined)
     {
-        res.end("Created Product Data");
+        let productArray=JSON.parse(products);
+
+        let product = productArray.find((product)=>{
+            return product.id==parsedUrl.query.id;
+        })
+
+        if(product!=undefined)
+        {
+            res.end(JSON.stringify(product));
+        }
+        else 
+        {
+            res.end(JSON.stringify({"message":"Product Not Found"}))
+        }
+     
     }
-    else if(req.url=="/users" && req.method=="POST")
+    // create new product 
+    else if(req.method=="POST" && parsedUrl.pathname=="/products")
     {
-        res.end("Created User");
+
+        let product="";
+
+        // this event is called for every chunk recived
+        req.on("data",(chunk)=>{
+           
+            product=product+chunk;
+        })
+
+        // this event is called at the end of stream and converts bytes to readable string 
+        req.on("end",()=>{
+
+            let productsArray=JSON.parse(products);
+            let newProduct = JSON.parse(product);
+
+            productsArray.push(newProduct);
+
+            fs.writeFile("./products.json",JSON.stringify(productsArray),(err)=>{
+                if(err==null)
+                {
+                    res.end(JSON.stringify({"message":"New Product Created"}))
+                }
+            })
+
+
+        })
+        
+        
     }
+
+  
+   
+    
 
   
 
