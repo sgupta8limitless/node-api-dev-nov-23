@@ -1,0 +1,14 @@
+{
+  "name": "db-work",
+  "version": "1.0.0",
+  "description": "Database connection project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Saurabh Gupta",
+  "license": "ISC",
+  "dependencies": {
+    "mongoose": "^8.0.1"
+  }
+}
