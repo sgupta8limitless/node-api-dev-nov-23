@@ -16,6 +16,50 @@ mongoose.connect("mongodb://localhost:27017/mongotuts")
     console.log(err)
 })
 
+
+// coding related to users 
+
+// schema for users 
+
+const userSchema = mongoose.Schema({
+    name:{
+        type:String,
+        required:[true,"Name is Mandatory"]
+    },
+    email:{
+        type:String,
+        required:[true,"Email is Mandatory"]
+    },
+    password:{
+        type:String,
+        required:[true,"Password is Mandatory"]
+    }
+},{timestamps:true})
+
+
+// model for user 
+
+const userModel = mongoose.model("users",userSchema);
+
+// endpoint to create a new user 
+
+app.post("/users",(req,res)=>{
+
+    
+
+})
+
+
+
+
+
+
+
+
+
+
+// coding related to products 
+
 // schema for products 
 
 const productSchema = mongoose.Schema({
