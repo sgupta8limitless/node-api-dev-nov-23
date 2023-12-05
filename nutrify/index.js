@@ -1,11 +1,14 @@
 const express = require('express');
 const mongoose = require('mongoose');
+
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+
 
 // importing models 
 const userModel = require('./models/userModel')
 const foodModel = require("./models/foodModel")
+const trackingModel = require("./models/trackingModel")
 const verifyToken = require("./verifyToken")
 
 // database connection 
@@ -144,7 +147,52 @@ app.get("/foods/:name",verifyToken,async (req,res)=>{
 })
 
 
+// endpoint to track a food 
 
+app.post("/track",verifyToken,async (req,res)=>{
+    
+    let trackData = req.body;
+   
+    try 
+    {
+        let data = await trackingModel.create(trackData);
+        console.log(data)
+        res.status(201).send({message:"Food Added"});
+    }
+    catch(err)
+    {
+        console.log(err);
+        res.status(500).send({message:"Some Problem in adding the food"})
+    }
+    
+
+
+})
+
+
+// endpoint to fetch all foods eaten by a person 
+
+app.get("/track/:userid/:date",verifyToken,async (req,res)=>{
+
+    let userid = req.params.userid;
+    let date = new Date(req.params.date);
+    let strDate = date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear();
+
+    try
+    {
+
+        let foods = await trackingModel.find({userId:userid,eatenDate:strDate}).populate('userId').populate('foodId')
+        res.send(foods);
+
+    }
+    catch(err)
+    {
+        console.log(err);
+        res.status(500).send({message:"Some Problem in getting the food"})
+    }
+
+
+})
 
 
 
