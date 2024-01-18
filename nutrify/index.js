@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+const cors = require('cors');
+
 
 // importing models 
 const userModel = require('./models/userModel')
@@ -26,6 +28,7 @@ mongoose.connect("mongodb://localhost:27017/nutrify")
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 
 // endpoint for registering user 
@@ -76,7 +79,7 @@ app.post("/login",async (req,res)=>{
                     jwt.sign({email:userCred.email},"nutrifyapp",(err,token)=>{
                         if(!err)
                         {
-                            res.send({message:"Login Success",token:token});
+                            res.send({message:"Login Success",token:token,userid:user._id,name:user.name});
                         }
                     })
                 }
