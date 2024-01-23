@@ -175,7 +175,7 @@ app.post("/track",verifyToken,async (req,res)=>{
 
 // endpoint to fetch all foods eaten by a person 
 
-app.get("/track/:userid/:date",verifyToken,async (req,res)=>{
+app.get("/track/:userid/:date",async (req,res)=>{
 
     let userid = req.params.userid;
     let date = new Date(req.params.date);
